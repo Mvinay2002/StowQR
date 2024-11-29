@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Item - StowQR</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Add Item - StowQR</h1>
+        <nav>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="logout">Logout</a>
+        </nav>
+    </header>
+    <main>
+        <form id="addItemForm" action="add-item" method="POST">
+            <div class="input-container">
+                <label for="name">Item Name:</label>
+                <input type="text" name="name" id="name" placeholder="Item Name" required>
+            </div>
+            <div class="input-container">
+                <label for="location">Location:</label>
+                <input type="text" name="location" id="location" placeholder="Location" required>
+            </div>
+            <div class="input-container">
+                <label for="quantity">Quantity:</label>
+                <input type="number" name="quantity" id="quantity" placeholder="Quantity" required>
+            </div>
+            <div class="input-container">
+                <label for="category">Category:</label>
+                <select name="category" id="category" required>
+                    <option value="" disabled selected>Select Category</option>
+                    <option value="Equipment">Equipment</option>
+                    <option value="Tools">Tools</option>
+                    <option value="Supplies">Supplies</option>
+	            <option value="electronics">Electronics</option>
+                    <option value="furniture">Furniture</option>
+                    <option value="clothing">Clothing</option>
+                    <option value="books">Books</option>
+                    <option value="toys">Toys</option>
+                    <option value="grocery">Groceries</option>
+		    <option value="other">Other</option>
+                </select>
+            </div>
+            <button class="large-button" type="submit">Add Item</button>
+        </form>
+    </main>
+    <footer>
+        <p>&copy; 2024 StowQR</p>
+    </footer>
+</body>
+</html>
+

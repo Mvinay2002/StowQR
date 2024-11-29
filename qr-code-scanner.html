@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Scanner - StowQR</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://unpkg.com/@zxing/library@latest"></script>
+    <style>
+        main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            margin-top: 20px;
+        }
+        #cameraPreview {
+            width: 320px;
+            height: auto;
+            margin-top: 20px;
+            display: none;
+            border: 2px solid #333;
+            border-radius: 8px;
+        }
+        #scanResult {
+            margin-top: 20px;
+            font-size: 18px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>QR Code Scanner - StowQR</h1>
+        <nav>
+            <a href="dashboard.html">Dashboard</a>
+        </nav>
+    </header>
+    <main>
+        <h2>Scan a QR Code</h2>
+        <div class="button-container">
+            <button class="large-button" onclick="startScan()">Open Camera</button>
+        </div>
+        <video id="cameraPreview"></video>
+        <div id="scanResult">
+            Scanned Result: 
+            <ul id="qr-result"></ul>
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2024 StowQR</p>
+    </footer>
+    <script>
+        let codeReader;
+
+        function startScan() {
+            document.getElementById('qr-result').innerHTML = '';
+            document.getElementById('scanResult').style.display = 'none';
+            document.getElementById('cameraPreview').style.display = 'block';
+
+            codeReader = new ZXing.BrowserMultiFormatReader();
+
+            codeReader.getVideoInputDevices()
+                .then((videoInputDevices) => {
+                    if (videoInputDevices.length > 0) {
+                        const selectedDeviceId = videoInputDevices[0].deviceId;
+
+                        codeReader.decodeOnceFromVideoDevice(selectedDeviceId, 'cameraPreview')
+                            .then((result) => {
+                                const items = JSON.parse(result.text);
+
+                                const resultDiv = document.getElementById('qr-result');
+                                resultDiv.innerHTML = items.map(item =>
+                                    `<li>${item.name} (${item.quantity}) - ${item.category}</li>`
+                                ).join('');
+                                document.getElementById('scanResult').style.display = 'block';
+
+                                codeReader.reset();
+                                document.getElementById('cameraPreview').style.display = 'none';
+                            })
+                            .catch((err) => {
+                                console.error('Error decoding QR code:', err);
+                                alert('Failed to read QR code. Please try again.');
+                            });
+                    } else {
+                        alert('No cameras found.');
+                    }
+                })
+                .catch((err) => {
+                    console.error('Error accessing cameras:', err);
+                    alert('Could not access camera. Please check your permissions.');
+                });
+        }
+    </script>
+</body>
+</html>

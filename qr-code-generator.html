@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Generator - StowQR</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        #printButton {
+            margin-top: 15px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>QR Code Generator - StowQR</h1>
+        <nav>
+            <a href="dashboard.html">Dashboard</a>
+        </nav>
+    </header>
+    <main>
+        <form id="qrCodeForm" onsubmit="generate(); return false;">
+            <div class="input-container">
+                <input type="text" id="itemDetails" placeholder="Enter location" required>
+            </div>
+            <div class="button-container">
+                <button class="large-button" type="submit">Generate QR Code</button>
+            </div>
+        </form>
+        <div id="qrcode"></div>
+        <div class="button-container">
+            <button id="printButton" class="large-button" onclick="printQRCode()">Print QR Code</button>
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2024 StowQR</p>
+    </footer>
+    <script>
+        function generate() {
+            const location = document.getElementById('itemDetails').value;
+
+            fetch(`/get-items?location=${location}`, {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' }
+            })
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.success) {
+                    document.getElementById('qrcode').innerHTML = "";
+
+                    const qrcode = new QRCode(document.getElementById("qrcode"), {
+                        text: JSON.stringify(data.items),
+                        width: 128,
+                        height: 128
+                    });
+
+                    document.getElementById('printButton').style.display = 'inline-block';
+                } else {
+                    alert('No items found for this location.');
+                }
+            })
+            .catch((err) => {
+                console.error('Error fetching items:', err);
+                alert('An error occurred. Please try again.');
+            });
+        }
+
+        function printQRCode() {
+            const qrCodeDiv = document.getElementById('qrcode');
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write('<html><head><title>Print QR Code</title></head><body>');
+            printWindow.document.write(qrCodeDiv.innerHTML);
+            printWindow.document.write('</body></html>');
+            printWindow.document.close();
+
+            printWindow.onload = function() {
+                printWindow.print();
+                printWindow.close();
+            };
+        }
+    </script>
+</body>
+</html>
